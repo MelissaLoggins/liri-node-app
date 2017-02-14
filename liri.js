@@ -1,6 +1,6 @@
 // Requirements and global variables.
 var keys = require('./keys.js') 
-var twitter = require('twitter'); 
+var Twitter = require('twitter'); 
 var spotify = require('spotify'); 
 var request = require('request'); 
 var fs = require('fs'); 
@@ -37,7 +37,7 @@ var SpotifyCall = function(songName){
 function getTweets(){
     console.log("tweets mission accomplished");
 
-    var client = new twitter(
+    var client = new Twitter(
         keys.twitterKeys
     );
 
@@ -55,7 +55,7 @@ function getTweets(){
             }
         };
     });
-};//end getTweets;
+};
 
 var MovieCall = function(movieTitle){
 

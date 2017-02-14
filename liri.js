@@ -1,6 +1,6 @@
 // Requirements and global variables.
-var apiKeys = require('./keys.js') 
-var Twitter = require('twitter'); 
+var keys = require('./keys.js') 
+var twitter = require('twitter'); 
 var spotify = require('spotify'); 
 var request = require('request'); 
 var fs = require('fs'); 
@@ -17,7 +17,7 @@ var SpotifyCall = function(songName){
 	 
 	spotify.search({ type: 'track', query: songName }, function(err, data) {
 	    if ( err ) {
-	        console.log('Warning! Error: ' + err);
+	        console.log('Error: ' + err);
 	        return;
 	    }
 
@@ -34,28 +34,36 @@ var SpotifyCall = function(songName){
 	});
 }
 
-var TwitterCall = function(){
-	 
-	var client = new Twitter(apiKeys.twitterKeys);
-	var params = {screen_name: 'MelissaLoggins'};
-	client.get('statuses/user_timeline', params, function(error, tweets, response){
-	  if (!error) {
-	  	for(var i=0; i < tweets.length; i++){
-	  		console.log(tweets[i].created_at);
-	  		console.log('');
-	  		console.log(tweets[i].text);
-	  	}
-	  }
-	});	
-}
+function getTweets(){
+    console.log("tweets mission accomplished");
 
-var MovieCall = function(movieName){
+    var client = new twitter(
+        keys.twitterKeys
+    );
 
-	if (movieName === undefined){
-		movieName = 'Mr Nobody';
+    var parameters = {
+        screen_name: 'MelissaLoggins',
+        count: 20
+    };
+
+    client.get('statuses/user_timeline', parameters, function(error, tweets, response){
+        if (!error) {
+            for (i=0; i<tweets.length; i++) {
+                var logData = ('Number: ' + (i+1) + '\n' + tweets[i].created_at + '\n' + tweets[i].text + '\n');
+                console.log(logData);
+                console.log("-------------------------");
+            }
+        };
+    });
+};//end getTweets;
+
+var MovieCall = function(movieTitle){
+
+	if (movieTitle === undefined){
+		movieTitle = 'Donnie Darko';
 	}
 
-	var urlHit = "http://www.omdbapi.com/?t=" + movieName + "&y=&plot=full&tomatoes=true&r=json";
+	var urlHit = "http://www.omdbapi.com/?t=" + movieTitle + "&y=&plot=full&tomatoes=true&r=json";
 
 	request(urlHit, function (error, response, body) {
 	  if (!error && response.statusCode === 200) {
@@ -74,7 +82,7 @@ var MovieCall = function(movieName){
 	});
 }
 
-var WhatitSaysCall = function(){
+var ISaid = function(){
 	fs.readFile("random.txt", "utf8", function(error, data) {
 		console.log(data);
 		
@@ -92,7 +100,7 @@ var WhatitSaysCall = function(){
 var pick = function(caseData, functionData){
 	switch(caseData) {
 	    case 'my-tweets':
-	        TwitterCall();
+	        getTweets();
 	        break;
 	    case 'spotify-this-song':
 	        SpotifyCall(functionData);
@@ -101,7 +109,7 @@ var pick = function(caseData, functionData){
 	    	MovieCall(functionData);
 	    	break;
 	    case 'do-what-it-says':
-	    	WhatitSaysCall();
+	    	ISaid();
 	    	break;
 	    default:
 	        console.log('LIRI doesn\'t know that');
